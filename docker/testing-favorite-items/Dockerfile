@@ -14,13 +14,13 @@ COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
-FROM golang:1.24-alpine AS builder-dependencies
+FROM golang:1.23-alpine AS builder-dependencies
 WORKDIR /go/src/app
 COPY ./backend .
 RUN go mod download
 
 # Build API
-FROM golang:1.24-alpine AS builder
+FROM golang:1.23-alpine AS builder
 ARG BUILD_TIME=unknown
 ARG COMMIT=unknown
 ARG VERSION=dev
