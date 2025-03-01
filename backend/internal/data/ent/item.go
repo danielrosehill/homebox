@@ -38,6 +38,8 @@ type Item struct {
 	Insured bool `json:"insured,omitempty"`
 	// Archived holds the value of the "archived" field.
 	Archived bool `json:"archived,omitempty"`
+	// Favorite holds the value of the "favorite" field.
+	Favorite bool `json:"favorite,omitempty"`
 	// AssetID holds the value of the "asset_id" field.
 	AssetID int `json:"asset_id,omitempty"`
 	// SerialNumber holds the value of the "serial_number" field.
@@ -187,7 +189,7 @@ func (*Item) scanValues(columns []string) ([]any, error) {
 	values := make([]any, len(columns))
 	for i := range columns {
 		switch columns[i] {
-		case item.FieldInsured, item.FieldArchived, item.FieldLifetimeWarranty:
+		case item.FieldInsured, item.FieldArchived, item.FieldFavorite, item.FieldLifetimeWarranty:
 			values[i] = new(sql.NullBool)
 		case item.FieldPurchasePrice, item.FieldSoldPrice:
 			values[i] = new(sql.NullFloat64)
@@ -279,6 +281,12 @@ func (i *Item) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field archived", values[j])
 			} else if value.Valid {
 				i.Archived = value.Bool
+			}
+		case item.FieldFavorite:
+			if value, ok := values[j].(*sql.NullBool); !ok {
+				return fmt.Errorf("unexpected type %T for field favorite", values[j])
+			} else if value.Valid {
+				i.Favorite = value.Bool
 			}
 		case item.FieldAssetID:
 			if value, ok := values[j].(*sql.NullInt64); !ok {
@@ -487,6 +495,9 @@ func (i *Item) String() string {
 	builder.WriteString(", ")
 	builder.WriteString("archived=")
 	builder.WriteString(fmt.Sprintf("%v", i.Archived))
+	builder.WriteString(", ")
+	builder.WriteString("favorite=")
+	builder.WriteString(fmt.Sprintf("%v", i.Favorite))
 	builder.WriteString(", ")
 	builder.WriteString("asset_id=")
 	builder.WriteString(fmt.Sprintf("%v", i.AssetID))

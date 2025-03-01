@@ -938,7 +938,7 @@ func (e *ItemsRepository) GetFavorites(ctx context.Context, GID uuid.UUID) ([]It
 			item.FavoriteEQ(true),
 		).
 		WithLocation().
-		WithLabels().
+		WithLabel().
 		WithFields().
 		WithAttachments().
 		All(ctx)
@@ -947,5 +947,5 @@ func (e *ItemsRepository) GetFavorites(ctx context.Context, GID uuid.UUID) ([]It
 		return nil, err
 	}
 
-	return mapItemsOutErr(items)
+	return mapItemsOutErr(items, err)
 }

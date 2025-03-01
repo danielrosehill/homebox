@@ -9,6 +9,7 @@ import (
 	"net/url"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
@@ -398,7 +399,7 @@ func (ctrl *V1Controller) HandleSetItemFavorite() errchain.HandlerFunc {
 			return validate.NewRequestError(err, http.StatusInternalServerError)
 		}
 
-		return server.NoContent(w)
+		return server.JSON(w, http.StatusNoContent, nil)
 	}
 }
 
