@@ -7,8 +7,6 @@ set -e
 
 # Configuration
 API_URL="http://localhost:7746/api"
-USERNAME="admin@example.com"
-PASSWORD="Tr5!Kp9@Lm7#Zx2$Vb6%Qw8^"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -19,46 +17,17 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}=== Homebox Test Data Seeder ===${NC}"
 echo -e "${BLUE}This script will create 10 test items with asset IDs for testing${NC}"
-echo -e "${YELLOW}Using credentials:${NC}"
-echo -e "${YELLOW}Username: ${USERNAME}${NC}"
-echo -e "${YELLOW}Password: ${PASSWORD}${NC}"
-echo -e "${YELLOW}If you've changed these credentials, please update them in this script.${NC}"
 
-# Check if registration is needed
-echo -e "${BLUE}Checking if registration is needed...${NC}"
-LOGIN_RESPONSE=$(curl -s -X POST "${API_URL}/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"${USERNAME}\",\"password\":\"${PASSWORD}\"}")
-
-if [[ "$LOGIN_RESPONSE" == *"404"* || "$LOGIN_RESPONSE" == *"401"* || "$LOGIN_RESPONSE" == *"invalid credentials"* ]]; then
-  echo -e "${YELLOW}User not found or invalid credentials. Attempting to register...${NC}"
-  
-  # Try to register
-  REGISTER_RESPONSE=$(curl -s -X POST "${API_URL}/v1/auth/register" \
-    -H "Content-Type: application/json" \
-    -d "{\"email\":\"${USERNAME}\",\"password\":\"${PASSWORD}\",\"name\":\"Admin User\"}")
-  
-  if [[ "$REGISTER_RESPONSE" == *"error"* ]]; then
-    echo -e "${RED}Registration failed. Error: ${REGISTER_RESPONSE}${NC}"
-    echo -e "${YELLOW}Please register manually with the credentials above and then run this script again.${NC}"
-    exit 1
-  else
-    echo -e "${GREEN}Registration successful!${NC}"
-  fi
-fi
-
-# Login and get token
-echo -e "${BLUE}Logging in...${NC}"
-TOKEN=$(curl -s -X POST "${API_URL}/v1/auth/login" \
-  -H "Content-Type: application/json" \
-  -d "{\"email\":\"${USERNAME}\",\"password\":\"${PASSWORD}\"}" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+# Get JWT token from user
+echo -e "${YELLOW}Please enter your JWT token from the browser (F12 > Application > Local Storage > auth.token):${NC}"
+read -r TOKEN
 
 if [ -z "$TOKEN" ]; then
-  echo -e "${RED}Failed to login. Please check your credentials and make sure Homebox is running.${NC}"
+  echo -e "${RED}No token provided. Exiting.${NC}"
   exit 1
 fi
 
-echo -e "${GREEN}Login successful!${NC}"
+echo -e "${GREEN}Token received!${NC}"
 
 # Get group ID
 echo -e "${BLUE}Getting group ID...${NC}"
@@ -66,7 +35,7 @@ GROUP_ID=$(curl -s -X GET "${API_URL}/v1/users/self" \
   -H "Authorization: Bearer ${TOKEN}" | grep -o '"defaultGroup":"[^"]*' | cut -d'"' -f4)
 
 if [ -z "$GROUP_ID" ]; then
-  echo -e "${RED}Failed to get group ID.${NC}"
+  echo -e "${RED}Failed to get group ID. Invalid token or API error.${NC}"
   exit 1
 fi
 
