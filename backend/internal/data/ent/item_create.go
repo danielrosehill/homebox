@@ -145,6 +145,20 @@ func (ic *ItemCreate) SetNillableArchived(b *bool) *ItemCreate {
 	return ic
 }
 
+// SetFavorite sets the "favorite" field.
+func (ic *ItemCreate) SetFavorite(b bool) *ItemCreate {
+	ic.mutation.SetFavorite(b)
+	return ic
+}
+
+// SetNillableFavorite sets the "favorite" field if the given value is not nil.
+func (ic *ItemCreate) SetNillableFavorite(b *bool) *ItemCreate {
+	if b != nil {
+		ic.SetFavorite(*b)
+	}
+	return ic
+}
+
 // SetAssetID sets the "asset_id" field.
 func (ic *ItemCreate) SetAssetID(i int) *ItemCreate {
 	ic.mutation.SetAssetID(i)
@@ -534,6 +548,10 @@ func (ic *ItemCreate) defaults() {
 		v := item.DefaultArchived
 		ic.mutation.SetArchived(v)
 	}
+	if _, ok := ic.mutation.Favorite(); !ok {
+		v := item.DefaultFavorite
+		ic.mutation.SetFavorite(v)
+	}
 	if _, ok := ic.mutation.AssetID(); !ok {
 		v := item.DefaultAssetID
 		ic.mutation.SetAssetID(v)
@@ -595,6 +613,9 @@ func (ic *ItemCreate) check() error {
 	}
 	if _, ok := ic.mutation.Archived(); !ok {
 		return &ValidationError{Name: "archived", err: errors.New(`ent: missing required field "Item.archived"`)}
+	}
+	if _, ok := ic.mutation.Favorite(); !ok {
+		return &ValidationError{Name: "favorite", err: errors.New(`ent: missing required field "Item.favorite"`)}
 	}
 	if _, ok := ic.mutation.AssetID(); !ok {
 		return &ValidationError{Name: "asset_id", err: errors.New(`ent: missing required field "Item.asset_id"`)}
@@ -706,6 +727,10 @@ func (ic *ItemCreate) createSpec() (*Item, *sqlgraph.CreateSpec) {
 	if value, ok := ic.mutation.Archived(); ok {
 		_spec.SetField(item.FieldArchived, field.TypeBool, value)
 		_node.Archived = value
+	}
+	if value, ok := ic.mutation.Favorite(); ok {
+		_spec.SetField(item.FieldFavorite, field.TypeBool, value)
+		_node.Favorite = value
 	}
 	if value, ok := ic.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)

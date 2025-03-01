@@ -8,6 +8,8 @@
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiChevronLeft from "~icons/mdi/chevron-left";
   import MdiBarcode from "~icons/mdi/barcode";
+  import MdiHeart from "~icons/mdi/heart";
+  import MdiTune from "~icons/mdi/tune";
 
   definePageMeta({
     middleware: ["auth"],
@@ -43,6 +45,7 @@
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
   const orderBy = useRouteQuery("orderBy", "name");
+  const showFavorites = useRouteQuery("favorites", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -222,14 +225,18 @@
       return;
     }
 
+    if (!queryParamsInitialized.value) {
+      return;
+    }
+
     loading.value = true;
 
-    const fields = [];
+    const fields = fieldTuples.value
+      .filter(([field, value]) => field && value)
+      .map(([field, value]) => `${field}=${value}`);
 
-    for (const t of fieldTuples.value) {
-      if (t[0] && t[1]) {
-        fields.push(`${t[0]}=${t[1]}`);
-      }
+    if (fields.length > 0) {
+      fieldSelector.value = true;
     }
 
     const toast = useNotifier();
@@ -240,16 +247,41 @@
       searchQuery = "#" + searchQuery;
     }
 
+    if (showFavorites.value) {
+      const { data, error } = await api.items.getFavorites();
+
+      if (error) {
+        toast.error("Failed to get favorite items");
+        loading.value = false;
+        initialSearch.value = false;
+        return;
+      }
+
+      items.value = data;
+      total.value = data.length;
+
+      await router.push({
+        query: {
+          ...route.query,
+          favorites: "true",
+        },
+      });
+
+      loading.value = false;
+      initialSearch.value = false;
+      return;
+    }
+
     const { data, error } = await api.items.getAll({
       q: searchQuery,
       locations: locIDs.value,
       labels: labIDs.value,
       negateLabels: negateLabels.value,
-      includeArchived: includeArchived.value,
       page: page.value,
       pageSize: pageSize.value,
-      orderBy: orderBy.value,
+      includeArchived: includeArchived.value,
       fields,
+      orderBy: orderBy.value,
     });
 
     function resetItems() {
@@ -277,7 +309,7 @@
     initialSearch.value = false;
   }
 
-  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations, showFavorites], search, { debounce: 250, maxWait: 1000 });
 
   async function submit() {
     // Set URL Params
@@ -360,13 +392,31 @@
             <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
           </div>
         </div>
-        <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
-          <template #icon>
-            <MdiLoading v-if="loading" class="animate-spin" />
-            <MdiMagnify v-else />
-          </template>
-          Search
-        </BaseButton>
+        <div class="flex gap-2">
+          <button
+            class="btn btn-sm"
+            :class="{ 'btn-primary': showFavorites }"
+            @click="showFavorites = !showFavorites"
+          >
+            <MdiHeart class="h-5 w-5" />
+            <span class="hidden md:inline">Favorites</span>
+          </button>
+          <button
+            class="btn btn-sm"
+            :class="{ 'btn-primary': advanced }"
+            @click="advanced = !advanced"
+          >
+            <MdiTune class="h-5 w-5" />
+            <span class="hidden md:inline">Advanced</span>
+          </button>
+          <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
+            <template #icon>
+              <MdiLoading v-if="loading" class="animate-spin" />
+              <MdiMagnify v-else />
+            </template>
+            Search
+          </BaseButton>
+        </div>
       </div>
 
       <div class="flex flex-wrap md:flex-nowrap gap-2 w-full py-2">

@@ -4083,6 +4083,7 @@ type ItemMutation struct {
 	addquantity                *int
 	insured                    *bool
 	archived                   *bool
+	favorite                   *bool
 	asset_id                   *int
 	addasset_id                *int
 	serial_number              *string
@@ -4612,6 +4613,42 @@ func (m *ItemMutation) OldArchived(ctx context.Context) (v bool, err error) {
 // ResetArchived resets all changes to the "archived" field.
 func (m *ItemMutation) ResetArchived() {
 	m.archived = nil
+}
+
+// SetFavorite sets the "favorite" field.
+func (m *ItemMutation) SetFavorite(b bool) {
+	m.favorite = &b
+}
+
+// Favorite returns the value of the "favorite" field in the mutation.
+func (m *ItemMutation) Favorite() (r bool, exists bool) {
+	v := m.favorite
+	if v == nil {
+		return
+	}
+	return *v, true
+}
+
+// OldFavorite returns the old "favorite" field's value of the Item entity.
+// If the Item object wasn't provided to the builder, the object is fetched from the database.
+// An error is returned if the mutation operation is not UpdateOne, or the database query fails.
+func (m *ItemMutation) OldFavorite(ctx context.Context) (v bool, err error) {
+	if !m.op.Is(OpUpdateOne) {
+		return v, errors.New("OldFavorite is only allowed on UpdateOne operations")
+	}
+	if m.id == nil || m.oldValue == nil {
+		return v, errors.New("OldFavorite requires an ID field in the mutation")
+	}
+	oldValue, err := m.oldValue(ctx)
+	if err != nil {
+		return v, fmt.Errorf("querying old value for OldFavorite: %w", err)
+	}
+	return oldValue.Favorite, nil
+}
+
+// ResetFavorite resets all changes to the "favorite" field.
+func (m *ItemMutation) ResetFavorite() {
+	m.favorite = nil
 }
 
 // SetAssetID sets the "asset_id" field.
@@ -5729,7 +5766,7 @@ func (m *ItemMutation) Type() string {
 // order to get all numeric fields that were incremented/decremented, call
 // AddedFields().
 func (m *ItemMutation) Fields() []string {
-	fields := make([]string, 0, 23)
+	fields := make([]string, 0, 24)
 	if m.created_at != nil {
 		fields = append(fields, item.FieldCreatedAt)
 	}
@@ -5756,6 +5793,9 @@ func (m *ItemMutation) Fields() []string {
 	}
 	if m.archived != nil {
 		fields = append(fields, item.FieldArchived)
+	}
+	if m.favorite != nil {
+		fields = append(fields, item.FieldFavorite)
 	}
 	if m.asset_id != nil {
 		fields = append(fields, item.FieldAssetID)
@@ -5825,6 +5865,8 @@ func (m *ItemMutation) Field(name string) (ent.Value, bool) {
 		return m.Insured()
 	case item.FieldArchived:
 		return m.Archived()
+	case item.FieldFavorite:
+		return m.Favorite()
 	case item.FieldAssetID:
 		return m.AssetID()
 	case item.FieldSerialNumber:
@@ -5880,6 +5922,8 @@ func (m *ItemMutation) OldField(ctx context.Context, name string) (ent.Value, er
 		return m.OldInsured(ctx)
 	case item.FieldArchived:
 		return m.OldArchived(ctx)
+	case item.FieldFavorite:
+		return m.OldFavorite(ctx)
 	case item.FieldAssetID:
 		return m.OldAssetID(ctx)
 	case item.FieldSerialNumber:
@@ -5979,6 +6023,13 @@ func (m *ItemMutation) SetField(name string, value ent.Value) error {
 			return fmt.Errorf("unexpected type %T for field %s", value, name)
 		}
 		m.SetArchived(v)
+		return nil
+	case item.FieldFavorite:
+		v, ok := value.(bool)
+		if !ok {
+			return fmt.Errorf("unexpected type %T for field %s", value, name)
+		}
+		m.SetFavorite(v)
 		return nil
 	case item.FieldAssetID:
 		v, ok := value.(int)
@@ -6285,6 +6336,9 @@ func (m *ItemMutation) ResetField(name string) error {
 		return nil
 	case item.FieldArchived:
 		m.ResetArchived()
+		return nil
+	case item.FieldFavorite:
+		m.ResetFavorite()
 		return nil
 	case item.FieldAssetID:
 		m.ResetAssetID()

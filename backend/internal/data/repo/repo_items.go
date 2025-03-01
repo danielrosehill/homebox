@@ -77,6 +77,7 @@ type (
 		Quantity    int       `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
+		Favorite    bool      `json:"favorite"`
 
 		// Edges
 		LocationID uuid.UUID   `json:"locationId"`
@@ -112,6 +113,7 @@ type (
 		ID        uuid.UUID `json:"id"`
 		Quantity  *int      `json:"quantity,omitempty" extensions:"x-nullable,x-omitempty"`
 		ImportRef *string   `json:"-,omitempty"        extensions:"x-nullable,x-omitempty"`
+		Favorite  *bool     `json:"favorite,omitempty" extensions:"x-nullable,x-omitempty"`
 	}
 
 	ItemSummary struct {
@@ -122,6 +124,7 @@ type (
 		Quantity    int       `json:"quantity"`
 		Insured     bool      `json:"insured"`
 		Archived    bool      `json:"archived"`
+		Favorite    bool      `json:"favorite"`
 		CreatedAt   time.Time `json:"createdAt"`
 		UpdatedAt   time.Time `json:"updatedAt"`
 
@@ -199,6 +202,7 @@ func mapItemSummary(item *ent.Item) ItemSummary {
 		CreatedAt:     item.CreatedAt,
 		UpdatedAt:     item.UpdatedAt,
 		Archived:      item.Archived,
+		Favorite:      item.Favorite,
 		PurchasePrice: item.PurchasePrice,
 
 		// Edges
@@ -695,7 +699,8 @@ func (e *ItemsRepository) UpdateByGroup(ctx context.Context, GID uuid.UUID, data
 		SetWarrantyExpires(data.WarrantyExpires.Time()).
 		SetWarrantyDetails(data.WarrantyDetails).
 		SetQuantity(data.Quantity).
-		SetAssetID(int(data.AssetID))
+		SetAssetID(int(data.AssetID)).
+		SetFavorite(data.Favorite)
 
 	currentLabels, err := e.db.Item.Query().Where(item.ID(data.ID)).QueryLabel().All(ctx)
 	if err != nil {
@@ -822,6 +827,10 @@ func (e *ItemsRepository) Patch(ctx context.Context, GID, ID uuid.UUID, data Ite
 
 	if data.Quantity != nil {
 		q.SetQuantity(*data.Quantity)
+	}
+
+	if data.Favorite != nil {
+		q.SetFavorite(*data.Favorite)
 	}
 
 	e.publishMutationEvent(GID)
@@ -1008,4 +1017,24 @@ func (e *ItemsRepository) SetPrimaryPhotos(ctx context.Context, GID uuid.UUID) (
 	}
 
 	return updated, nil
+}
+
+// GetFavorites returns all favorite items for a group
+func (e *ItemsRepository) GetFavorites(ctx context.Context, GID uuid.UUID) ([]ItemOut, error) {
+	items, err := e.db.Item.Query().
+		Where(
+			item.HasGroupWith(group.ID(GID)),
+			item.FavoriteEQ(true),
+		).
+		WithLocation().
+		WithLabel().
+		WithFields().
+		WithAttachments().
+		All(ctx)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return mapItemsOutErr(items, err)
 }

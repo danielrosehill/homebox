@@ -33,6 +33,8 @@ const (
 	FieldInsured = "insured"
 	// FieldArchived holds the string denoting the archived field in the database.
 	FieldArchived = "archived"
+	// FieldFavorite holds the string denoting the favorite field in the database.
+	FieldFavorite = "favorite"
 	// FieldAssetID holds the string denoting the asset_id field in the database.
 	FieldAssetID = "asset_id"
 	// FieldSerialNumber holds the string denoting the serial_number field in the database.
@@ -141,6 +143,7 @@ var Columns = []string{
 	FieldQuantity,
 	FieldInsured,
 	FieldArchived,
+	FieldFavorite,
 	FieldAssetID,
 	FieldSerialNumber,
 	FieldModelNumber,
@@ -207,6 +210,8 @@ var (
 	DefaultInsured bool
 	// DefaultArchived holds the default value on creation for the "archived" field.
 	DefaultArchived bool
+	// DefaultFavorite holds the default value on creation for the "favorite" field.
+	DefaultFavorite bool
 	// DefaultAssetID holds the default value on creation for the "asset_id" field.
 	DefaultAssetID int
 	// SerialNumberValidator is a validator for the "serial_number" field. It is called by the builders before save.
@@ -280,6 +285,11 @@ func ByInsured(opts ...sql.OrderTermOption) OrderOption {
 // ByArchived orders the results by the archived field.
 func ByArchived(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldArchived, opts...).ToFunc()
+}
+
+// ByFavorite orders the results by the favorite field.
+func ByFavorite(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldFavorite, opts...).ToFunc()
 }
 
 // ByAssetID orders the results by the asset_id field.
