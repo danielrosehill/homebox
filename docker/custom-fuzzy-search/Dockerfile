@@ -14,13 +14,13 @@ COPY frontend .
 COPY --from=frontend-dependencies /app/node_modules ./node_modules
 RUN pnpm build
 
-FROM golang:1.23-alpine AS builder-dependencies
+FROM golang:1.24-alpine AS builder-dependencies
 WORKDIR /go/src/app
 COPY ./backend .
 RUN go mod download
 
 # Build API
-FROM golang:1.23-alpine AS builder
+FROM golang:1.24-alpine AS builder
 ARG BUILD_TIME
 ARG COMMIT
 ARG VERSION
@@ -37,7 +37,7 @@ COPY --from=builder-dependencies /go/pkg/mod /go/pkg/mod
 RUN CGO_ENABLED=0 GOOS=linux go build \
     -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION"  \
     -o /go/bin/api \
-    -v ./app/api/*.go
+    -v ./app/api
 
 # Production Stage
 FROM alpine:latest
