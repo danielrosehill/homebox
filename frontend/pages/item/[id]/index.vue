@@ -71,12 +71,16 @@
     item.value.quantity = newQuantity;
   }
 
+  const isFavorite = computed(() => {
+    return item.value?.favorite || false;
+  });
+
   async function toggleFavorite() {
     if (!item.value) {
       return;
     }
 
-    const newFavoriteStatus = !item.value.favorite;
+    const newFavoriteStatus = !isFavorite.value;
     
     const resp = await api.items.setFavorite(item.value.id, newFavoriteStatus);
 
@@ -198,7 +202,7 @@
       },
       {
         name: "Favorite",
-        text: item.value?.favorite ? "Yes" : "No",
+        text: isFavorite.value ? "Yes" : "No",
       },
       {
         name: "Notes",
@@ -547,7 +551,7 @@
               </label>
               <PageQRCode />
               <button class="btn btn-sm btn-circle" @click="toggleFavorite()">
-                <MdiHeart v-if="item.favorite" class="h-5 w-5" />
+                <MdiHeart v-if="isFavorite" class="h-5 w-5" />
                 <MdiHeartOutline v-else class="h-5 w-5" />
               </button>
             </div>

@@ -90,6 +90,7 @@ export interface ItemOut {
   attachments: ItemAttachment[];
   createdAt: Date | string;
   description: string;
+  favorite: boolean;
   fields: ItemField[];
   id: string;
   imageId: string;
