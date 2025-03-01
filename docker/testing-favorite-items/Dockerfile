@@ -34,8 +34,15 @@ COPY ./backend .
 RUN rm -rf ./app/api/public
 COPY --from=frontend-builder /app/.output/public ./app/api/static/public
 COPY --from=builder-dependencies /go/pkg/mod /go/pkg/mod
-RUN CGO_ENABLED=0 GOOS=linux go build \
-    -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION"  \
+
+# Set environment variables for the CGO-free SQLite build
+ENV CGO_ENABLED=0 
+ENV GOOS=linux
+ENV GOARCH=amd64
+
+RUN go build \
+    -ldflags "-s -w -X main.commit=$COMMIT -X main.buildTime=$BUILD_TIME -X main.version=$VERSION" \
+    -tags sqlite_omit_load_extension \
     -o /go/bin/api \
     -v ./app/api
 
