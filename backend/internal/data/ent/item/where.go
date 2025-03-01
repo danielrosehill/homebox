@@ -101,6 +101,11 @@ func Archived(v bool) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldArchived, v))
 }
 
+// Favorite applies equality check predicate on the "favorite" field. It's identical to FavoriteEQ.
+func Favorite(v bool) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldFavorite, v))
+}
+
 // AssetID applies equality check predicate on the "asset_id" field. It's identical to AssetIDEQ.
 func AssetID(v int) predicate.Item {
 	return predicate.Item(sql.FieldEQ(FieldAssetID, v))
@@ -599,6 +604,16 @@ func ArchivedEQ(v bool) predicate.Item {
 // ArchivedNEQ applies the NEQ predicate on the "archived" field.
 func ArchivedNEQ(v bool) predicate.Item {
 	return predicate.Item(sql.FieldNEQ(FieldArchived, v))
+}
+
+// FavoriteEQ applies the EQ predicate on the "favorite" field.
+func FavoriteEQ(v bool) predicate.Item {
+	return predicate.Item(sql.FieldEQ(FieldFavorite, v))
+}
+
+// FavoriteNEQ applies the NEQ predicate on the "favorite" field.
+func FavoriteNEQ(v bool) predicate.Item {
+	return predicate.Item(sql.FieldNEQ(FieldFavorite, v))
 }
 
 // AssetIDEQ applies the EQ predicate on the "asset_id" field.

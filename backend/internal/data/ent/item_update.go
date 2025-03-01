@@ -164,6 +164,20 @@ func (iu *ItemUpdate) SetNillableArchived(b *bool) *ItemUpdate {
 	return iu
 }
 
+// SetFavorite sets the "favorite" field.
+func (iu *ItemUpdate) SetFavorite(b bool) *ItemUpdate {
+	iu.mutation.SetFavorite(b)
+	return iu
+}
+
+// SetNillableFavorite sets the "favorite" field if the given value is not nil.
+func (iu *ItemUpdate) SetNillableFavorite(b *bool) *ItemUpdate {
+	if b != nil {
+		iu.SetFavorite(*b)
+	}
+	return iu
+}
+
 // SetAssetID sets the "asset_id" field.
 func (iu *ItemUpdate) SetAssetID(i int) *ItemUpdate {
 	iu.mutation.ResetAssetID()
@@ -830,6 +844,9 @@ func (iu *ItemUpdate) sqlSave(ctx context.Context) (n int, err error) {
 	if value, ok := iu.mutation.Archived(); ok {
 		_spec.SetField(item.FieldArchived, field.TypeBool, value)
 	}
+	if value, ok := iu.mutation.Favorite(); ok {
+		_spec.SetField(item.FieldFavorite, field.TypeBool, value)
+	}
 	if value, ok := iu.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)
 	}
@@ -1368,6 +1385,20 @@ func (iuo *ItemUpdateOne) SetArchived(b bool) *ItemUpdateOne {
 func (iuo *ItemUpdateOne) SetNillableArchived(b *bool) *ItemUpdateOne {
 	if b != nil {
 		iuo.SetArchived(*b)
+	}
+	return iuo
+}
+
+// SetFavorite sets the "favorite" field.
+func (iuo *ItemUpdateOne) SetFavorite(b bool) *ItemUpdateOne {
+	iuo.mutation.SetFavorite(b)
+	return iuo
+}
+
+// SetNillableFavorite sets the "favorite" field if the given value is not nil.
+func (iuo *ItemUpdateOne) SetNillableFavorite(b *bool) *ItemUpdateOne {
+	if b != nil {
+		iuo.SetFavorite(*b)
 	}
 	return iuo
 }
@@ -2067,6 +2098,9 @@ func (iuo *ItemUpdateOne) sqlSave(ctx context.Context) (_node *Item, err error) 
 	}
 	if value, ok := iuo.mutation.Archived(); ok {
 		_spec.SetField(item.FieldArchived, field.TypeBool, value)
+	}
+	if value, ok := iuo.mutation.Favorite(); ok {
+		_spec.SetField(item.FieldFavorite, field.TypeBool, value)
 	}
 	if value, ok := iuo.mutation.AssetID(); ok {
 		_spec.SetField(item.FieldAssetID, field.TypeInt, value)

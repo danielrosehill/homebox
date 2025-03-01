@@ -396,6 +396,59 @@ func (ctrl *V1Controller) HandleItemsByAssetID() errchain.HandlerFunc {
 	}
 }
 
+// HandleGetFavoriteItems godocs
+//
+//	@Summary  Get Favorite Items
+//	@Tags     Items
+//	@Produce  json
+//	@Success  200 {array} repo.ItemOut
+//	@Router   /v1/items/favorites [GET]
+//	@Security Bearer
+func (ctrl *V1Controller) HandleGetFavoriteItems() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		ctx := services.NewContext(r.Context())
+
+		items, err := ctrl.svc.Items.GetFavorites(ctx)
+		if err != nil {
+			log.Err(err).Msg("failed to get favorite items")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		return server.JSON(w, http.StatusOK, items)
+	}
+}
+
+// HandleSetItemFavorite godocs
+//
+//	@Summary  Set Item Favorite Status
+//	@Tags     Items
+//	@Produce  json
+//	@Param    id      path     string true "Item ID"
+//	@Param    favorite query   bool   true "Favorite status"
+//	@Success  204
+//	@Router   /v1/items/{id}/favorite [PUT]
+//	@Security Bearer
+func (ctrl *V1Controller) HandleSetItemFavorite() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		ctx := services.NewContext(r.Context())
+
+		id, err := uuid.Parse(chi.URLParam(r, "id"))
+		if err != nil {
+			return validate.NewRequestError(err, http.StatusBadRequest)
+		}
+
+		favorite := queryBool(r.URL.Query().Get("favorite"))
+
+		err = ctrl.svc.Items.SetFavorite(ctx, id, favorite)
+		if err != nil {
+			log.Err(err).Msg("failed to set item favorite status")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+
+		return server.JSON(w, http.StatusNoContent, nil)
+	}
+}
+
 func getHBURL(refererHeader, fallback string) (hbURL string) {
 	hbURL = refererHeader
 	if hbURL == "" {

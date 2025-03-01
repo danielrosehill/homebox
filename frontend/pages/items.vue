@@ -8,6 +8,8 @@
   import MdiChevronRight from "~icons/mdi/chevron-right";
   import MdiChevronLeft from "~icons/mdi/chevron-left";
   import MdiBarcode from "~icons/mdi/barcode";
+  import MdiHeart from "~icons/mdi/heart";
+  import MdiTune from "~icons/mdi/tune";
 
   definePageMeta({
     middleware: ["auth"],
@@ -43,6 +45,7 @@
   const fieldSelector = useRouteQuery("fieldSelector", false);
   const negateLabels = useRouteQuery("negateLabels", false);
   const orderBy = useRouteQuery("orderBy", "name");
+  const showFavorites = useRouteQuery("favorites", false);
 
   const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
   const hasNext = computed(() => page.value * pageSize.value < total.value);
@@ -234,6 +237,29 @@
 
     const toast = useNotifier();
 
+    if (showFavorites.value) {
+      const { data, error } = await api.items.getFavorites();
+
+      if (error) {
+        loading.value = false;
+        toast.error("Failed to get favorite items");
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        loading.value = false;
+        total.value = 0;
+        items.value = [];
+        return;
+      }
+
+      total.value = data.length;
+      items.value = data;
+      loading.value = false;
+      initialSearch.value = false;
+      return;
+    }
+
     // If searching by asset ID, add the # prefix if not already present
     let searchQuery = query.value || "";
     if (searchByAssetId.value && searchQuery && !searchQuery.startsWith("#")) {
@@ -277,7 +303,7 @@
     initialSearch.value = false;
   }
 
-  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations], search, { debounce: 250, maxWait: 1000 });
+  watchDebounced([page, pageSize, query, selectedLabels, selectedLocations, showFavorites], search, { debounce: 250, maxWait: 1000 });
 
   async function submit() {
     // Set URL Params
@@ -360,13 +386,31 @@
             <p>Querying Asset ID Number: {{ parsedAssetId }}</p>
           </div>
         </div>
-        <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
-          <template #icon>
-            <MdiLoading v-if="loading" class="animate-spin" />
-            <MdiMagnify v-else />
-          </template>
-          Search
-        </BaseButton>
+        <div class="flex gap-2">
+          <button
+            class="btn btn-sm"
+            :class="{ 'btn-primary': showFavorites }"
+            @click="showFavorites = !showFavorites"
+          >
+            <MdiHeart class="h-5 w-5" />
+            <span class="hidden md:inline">Favorites</span>
+          </button>
+          <button
+            class="btn btn-sm"
+            :class="{ 'btn-primary': advanced }"
+            @click="advanced = !advanced"
+          >
+            <MdiTune class="h-5 w-5" />
+            <span class="hidden md:inline">Advanced</span>
+          </button>
+          <BaseButton class="btn-block md:w-auto" @click.prevent="submit">
+            <template #icon>
+              <MdiLoading v-if="loading" class="animate-spin" />
+              <MdiMagnify v-else />
+            </template>
+            Search
+          </BaseButton>
+        </div>
       </div>
 
       <div class="flex flex-wrap md:flex-nowrap gap-2 w-full py-2">

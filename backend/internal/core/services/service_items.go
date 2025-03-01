@@ -353,3 +353,11 @@ func (svc *ItemService) ExportBillOfMaterialsCSV(ctx context.Context, GID uuid.U
 
 	return reporting.BillOfMaterialsCSV(items)
 }
+
+func (svc *ItemService) SetFavorite(ctx Context, itemID uuid.UUID, favorite bool) error {
+	return svc.repo.Items.Patch(ctx, ctx.GID, itemID, repo.ItemPatch{Favorite: &favorite})
+}
+
+func (svc *ItemService) GetFavorites(ctx Context) ([]repo.ItemOut, error) {
+	return svc.repo.Items.GetFavorites(ctx, ctx.GID)
+}
