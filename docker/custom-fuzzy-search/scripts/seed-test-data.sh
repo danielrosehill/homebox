@@ -2,6 +2,7 @@
 
 # Script to seed 10 dummy assets for testing the asset ID search feature
 # This script uses curl to make API calls to the Homebox API
+# Trigger GitHub Actions workflow
 
 set -e
 
