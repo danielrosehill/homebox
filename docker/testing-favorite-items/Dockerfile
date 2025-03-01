@@ -21,9 +21,9 @@ RUN go mod download
 
 # Build API
 FROM golang:1.24-alpine AS builder
-ARG BUILD_TIME
-ARG COMMIT
-ARG VERSION
+ARG BUILD_TIME=unknown
+ARG COMMIT=unknown
+ARG VERSION=dev
 RUN apk update && \
     apk upgrade && \
     apk add --no-cache --update git build-base gcc g++ && \
