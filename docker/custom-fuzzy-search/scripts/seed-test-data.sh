@@ -8,7 +8,7 @@ set -e
 # Configuration
 API_URL="http://localhost:7746/api"
 USERNAME="admin@example.com"
-PASSWORD="password"
+PASSWORD="Password123!"
 
 # Colors for output
 GREEN='\033[0;32m'
@@ -19,10 +19,33 @@ NC='\033[0m' # No Color
 
 echo -e "${BLUE}=== Homebox Test Data Seeder ===${NC}"
 echo -e "${BLUE}This script will create 10 test items with asset IDs for testing${NC}"
-echo -e "${YELLOW}Using default credentials:${NC}"
+echo -e "${YELLOW}Using credentials:${NC}"
 echo -e "${YELLOW}Username: ${USERNAME}${NC}"
 echo -e "${YELLOW}Password: ${PASSWORD}${NC}"
 echo -e "${YELLOW}If you've changed these credentials, please update them in this script.${NC}"
+
+# Check if registration is needed
+echo -e "${BLUE}Checking if registration is needed...${NC}"
+LOGIN_RESPONSE=$(curl -s -X POST "${API_URL}/v1/auth/login" \
+  -H "Content-Type: application/json" \
+  -d "{\"email\":\"${USERNAME}\",\"password\":\"${PASSWORD}\"}")
+
+if [[ "$LOGIN_RESPONSE" == *"404"* || "$LOGIN_RESPONSE" == *"401"* || "$LOGIN_RESPONSE" == *"invalid credentials"* ]]; then
+  echo -e "${YELLOW}User not found or invalid credentials. Attempting to register...${NC}"
+  
+  # Try to register
+  REGISTER_RESPONSE=$(curl -s -X POST "${API_URL}/v1/auth/register" \
+    -H "Content-Type: application/json" \
+    -d "{\"email\":\"${USERNAME}\",\"password\":\"${PASSWORD}\",\"name\":\"Admin User\"}")
+  
+  if [[ "$REGISTER_RESPONSE" == *"error"* ]]; then
+    echo -e "${RED}Registration failed. Error: ${REGISTER_RESPONSE}${NC}"
+    echo -e "${YELLOW}Please register manually with the credentials above and then run this script again.${NC}"
+    exit 1
+  else
+    echo -e "${GREEN}Registration successful!${NC}"
+  fi
+fi
 
 # Login and get token
 echo -e "${BLUE}Logging in...${NC}"
