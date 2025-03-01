@@ -14,10 +14,15 @@ PASSWORD="password"
 GREEN='\033[0;32m'
 RED='\033[0;31m'
 BLUE='\033[0;34m'
+YELLOW='\033[0;33m'
 NC='\033[0m' # No Color
 
 echo -e "${BLUE}=== Homebox Test Data Seeder ===${NC}"
 echo -e "${BLUE}This script will create 10 test items with asset IDs for testing${NC}"
+echo -e "${YELLOW}Using default credentials:${NC}"
+echo -e "${YELLOW}Username: ${USERNAME}${NC}"
+echo -e "${YELLOW}Password: ${PASSWORD}${NC}"
+echo -e "${YELLOW}If you've changed these credentials, please update them in this script.${NC}"
 
 # Login and get token
 echo -e "${BLUE}Logging in...${NC}"
