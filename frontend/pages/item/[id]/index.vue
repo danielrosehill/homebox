@@ -547,7 +547,7 @@
               </label>
               <PageQRCode />
               <button class="btn btn-sm btn-circle" @click="toggleFavorite()">
-                <MdiHeart v-if="item.value.favorite" class="h-5 w-5" />
+                <MdiHeart v-if="item.favorite" class="h-5 w-5" />
                 <MdiHeartOutline v-else class="h-5 w-5" />
               </button>
             </div>
