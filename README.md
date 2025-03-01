@@ -1,55 +1,49 @@
-<div align="center">
-  <img src="/docs/public/lilbox.svg" height="200"/>
-</div>
+# Homebox Custom Docker Image
 
-<h1 align="center" style="margin-top: -10px"> HomeBox </h1>
-<p align="center" style="width: 100;">
-   <a href="https://homebox.sysadminsmedia.com">Docs</a>
-   |
-   <a href="https://homebox.fly.dev">Demo</a>
-   |
-   <a href="https://discord.gg/aY4DCkpNA9">Discord</a>
-</p>
+This is a custom build of Homebox that includes additional features not yet merged into the main project.
 
-## What is HomeBox
+## Features
 
-Homebox is the inventory and organization system built for the Home User! With a focus on simplicity and ease of use, Homebox is the perfect solution for your home inventory, organization, and management needs. While developing this project, I've tried to keep the following principles in mind:
-
-- _Simple_ - Homebox is designed to be simple and easy to use. No complicated setup or configuration required. Use either a single docker container, or deploy yourself by compiling the binary for your platform of choice.
-- _Blazingly Fast_ - Homebox is written in Go, which makes it extremely fast and requires minimal resources to deploy. In general, idle memory usage is less than 50MB for the whole container.
-- _Portable_ - Homebox is designed to be portable and run on anywhere. We use SQLite and an embedded Web UI to make it easy to deploy, use, and backup.
-
-# Screenshots
-Check out screenshots of the project [here](https://imgur.com/a/5gLWt2j).
+- Fuzzy search functionality
+- Asset ID lookup (coming soon)
 
 ## Quick Start
 
-[Configuration & Docker Compose](https://homebox.sysadminsmedia.com/en/quick-start.html)
-
 ```bash
-# If using the rootless image, ensure data 
-# folder has correct permissions
-mkdir -p /path/to/data/folder
-chown 65532:65532 -R /path/to/data/folder
 docker run -d \
   --name homebox \
-  --restart unless-stopped \
-  --publish 3100:7745 \
-  --env TZ=Europe/Bucharest \
-  --volume /path/to/data/folder/:/data \
-  ghcr.io/sysadminsmedia/homebox:latest
-# ghcr.io/sysadminsmedia/homebox:latest-rootless
+  -p 7745:7745 \
+  -v homebox-data:/data \
+  danielrosehill/homebox:fuzzy-search
 ```
 
-<!-- CONTRIBUTING -->
+For more detailed instructions, see the [docker/custom-fuzzy-search/README.md](docker/custom-fuzzy-search/README.md) file.
 
-## Contributing
+## Maintenance
 
-Contributions are what make the open source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+This repository is a fork of [Homebox](https://github.com/sysadminsmedia/homebox) with custom features and Docker images.
 
-If you are not a coder, you can still contribute financially. Financial contributions help me prioritize working on this project over others and helps me know that there is a real demand for project development.
+### Adding New Features
 
-## Credits
+1. Create a feature branch from the main Homebox repository
+2. Develop and test your feature
+3. Use the integration scripts to add the feature to your custom Docker image:
 
-- Original project by [@hay-kot](https://github.com/hay-kot)
-- Logo by [@lakotelman](https://github.com/lakotelman)
+```bash
+cd docker/custom-fuzzy-search/scripts
+./integrate-feature.sh your-feature-branch
+```
+
+### Building and Testing
+
+```bash
+cd docker/custom-fuzzy-search/scripts
+./build-and-test.sh
+```
+
+### Updating Your Container
+
+```bash
+docker pull danielrosehill/homebox:fuzzy-search
+docker-compose down
+docker-compose up -d
