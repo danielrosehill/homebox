@@ -60,6 +60,45 @@ docker-compose down
 docker-compose up -d
 ```
 
+## Maintenance Scripts
+
+This repository includes several scripts to help maintain your custom Docker image:
+
+### Integrating a New Feature
+
+To integrate a new feature branch into your custom Docker image:
+
+```bash
+cd docker/custom-fuzzy-search/scripts
+./integrate-feature.sh feature-branch-name
+```
+
+For example, to integrate the asset ID lookup feature:
+
+```bash
+./integrate-feature.sh asset-id-lookup
+```
+
+### Updating All Features
+
+To update your custom Docker image with all available features:
+
+```bash
+cd docker/custom-fuzzy-search/scripts
+./update-all-features.sh
+```
+
+### Building and Testing Locally
+
+To build and test your custom Docker image locally:
+
+```bash
+cd docker/custom-fuzzy-search/scripts
+./build-and-test.sh [tag]
+```
+
+The default tag is "local-test" if not specified.
+
 ## Building the Image Yourself
 
 If you want to build the image yourself:
