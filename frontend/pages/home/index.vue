@@ -44,13 +44,13 @@
         </div>
       </HomeAccordionSection>
 
-      <HomeAccordionSection title="Storage Locations">
+      <HomeAccordionSection title="Storage Locations" :default-collapsed="true">
         <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
       </HomeAccordionSection>
 
-      <HomeAccordionSection title="Labels">
+      <HomeAccordionSection title="Labels" :default-collapsed="true">
         <div class="flex gap-4 flex-wrap">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>

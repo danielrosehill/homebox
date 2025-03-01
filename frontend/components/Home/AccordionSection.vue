@@ -1,6 +1,6 @@
 <template>
   <section>
-    <BaseCard collapsable>
+    <BaseCard collapsable :default-collapsed="defaultCollapsed">
       <template #title>{{ title }}</template>
       <template #title-actions>
         <slot name="title-actions"></slot>
@@ -15,5 +15,6 @@
 <script setup lang="ts">
 defineProps<{
   title: string;
+  defaultCollapsed?: boolean;
 }>();
 </script>

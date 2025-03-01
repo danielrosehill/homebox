@@ -37,13 +37,14 @@
   import MdiChevronDown from "~icons/mdi/chevron-down";
   import MdiChevronRight from "~icons/mdi/chevron-right";
 
-  defineProps<{
+  const props = defineProps<{
     collapsable?: boolean;
+    defaultCollapsed?: boolean;
   }>();
 
   function toggle() {
     collapsed.value = !collapsed.value;
   }
 
-  const collapsed = ref(false);
+  const collapsed = ref(props.defaultCollapsed || false);
 </script>
