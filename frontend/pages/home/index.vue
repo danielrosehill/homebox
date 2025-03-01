@@ -3,6 +3,7 @@
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import HomeAccordionSection from "~/components/Home/AccordionSection.vue";
 
   definePageMeta({
     middleware: ["auth"],
@@ -34,30 +35,26 @@
         </div>
       </section>
 
-      <section>
-        <Subtitle> Recently Added </Subtitle>
-
+      <HomeAccordionSection title="Recently Added">
         <BaseCard v-if="breakpoints.lg">
           <ItemViewTable :items="itemTable.items" />
         </BaseCard>
         <div v-else class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
         </div>
-      </section>
+      </HomeAccordionSection>
 
-      <section>
-        <Subtitle> Storage Locations </Subtitle>
-        <div class="grid grid-cols-1 sm:grid-cols-2 card md:grid-cols-3 gap-4">
+      <HomeAccordionSection title="Storage Locations">
+        <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
-      </section>
+      </HomeAccordionSection>
 
-      <section>
-        <Subtitle> Labels </Subtitle>
+      <HomeAccordionSection title="Labels">
         <div class="flex gap-4 flex-wrap">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
-      </section>
+      </HomeAccordionSection>
     </BaseContainer>
   </div>
 </template>
