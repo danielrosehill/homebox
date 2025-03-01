@@ -8,7 +8,7 @@ set -e
 # Configuration
 API_URL="http://localhost:7746/api"
 USERNAME="admin@example.com"
-PASSWORD="Password123!"
+PASSWORD="Tr5!Kp9@Lm7#Zx2$Vb6%Qw8^"
 
 # Colors for output
 GREEN='\033[0;32m'
