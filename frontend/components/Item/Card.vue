@@ -16,6 +16,9 @@
       <h2 class="text-lg font-bold two-line">{{ item.name }}</h2>
       <div class="divider my-0"></div>
       <div class="flex justify-between gap-2">
+        <div v-if="item.favorite" class="tooltip z-10" data-tip="Favorite">
+          <MdiHeart class="h-5 w-5 text-red-500" />
+        </div>
         <div v-if="item.insured" class="tooltip z-10" data-tip="Insured">
           <MdiShieldCheck class="h-5 w-5 text-primary" />
         </div>
@@ -36,6 +39,7 @@
 <script setup lang="ts">
   import type { ItemOut, ItemSummary } from "~~/lib/api/types/data-contracts";
   import MdiShieldCheck from "~icons/mdi/shield-check";
+  import MdiHeart from "~icons/mdi/heart";
 
   const api = useUserApi();
 

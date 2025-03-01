@@ -7,6 +7,8 @@
   import MdiPlus from "~icons/mdi/plus";
   import MdiMinus from "~icons/mdi/minus";
   import MdiDownload from "~icons/mdi/download";
+  import MdiHeart from "~icons/mdi/heart";
+  import MdiHeartOutline from "~icons/mdi/heart-outline";
 
   definePageMeta({
     middleware: ["auth"],
@@ -67,6 +69,24 @@
     }
 
     item.value.quantity = newQuantity;
+  }
+
+  async function toggleFavorite() {
+    if (!item.value) {
+      return;
+    }
+
+    const newFavoriteStatus = !item.value.favorite;
+    
+    const resp = await api.items.setFavorite(item.value.id, newFavoriteStatus);
+
+    if (resp.error) {
+      toast.error("Failed to update favorite status");
+      return;
+    }
+
+    item.value.favorite = newFavoriteStatus;
+    toast.success(`Item ${newFavoriteStatus ? 'added to' : 'removed from'} favorites`);
   }
 
   type FilteredAttachments = {
@@ -175,6 +195,10 @@
       {
         name: "Insured",
         text: item.value?.insured ? "Yes" : "No",
+      },
+      {
+        name: "Favorite",
+        text: item.value?.favorite ? "Yes" : "No",
       },
       {
         name: "Notes",
@@ -522,6 +546,10 @@
                 <span class="label-text ml-4"> Show Empty </span>
               </label>
               <PageQRCode />
+              <button class="btn btn-sm btn-circle" @click="toggleFavorite()">
+                <MdiHeart v-if="item.value.favorite" class="h-5 w-5" />
+                <MdiHeartOutline v-else class="h-5 w-5" />
+              </button>
             </div>
           </template>
           <DetailsSection :details="itemDetails">

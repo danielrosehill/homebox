@@ -31,6 +31,7 @@ func (Item) Indexes() []ent.Index {
 		index.Fields("serial_number"),
 		index.Fields("archived"),
 		index.Fields("asset_id"),
+		index.Fields("favorite"), // Add index for favorite field
 	}
 }
 
@@ -48,6 +49,8 @@ func (Item) Fields() []ent.Field {
 		field.Bool("insured").
 			Default(false),
 		field.Bool("archived").
+			Default(false),
+		field.Bool("favorite").  // Add favorite field
 			Default(false),
 		field.Int("asset_id").
 			Default(0),

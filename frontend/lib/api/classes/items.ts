@@ -175,4 +175,14 @@ export class ItemsApi extends BaseAPI {
   exportURL() {
     return route("/items/export");
   }
+
+  getFavorites() {
+    return this.http.get<ItemOut[]>({ url: route("/items/favorites") });
+  }
+
+  setFavorite(id: string, favorite: boolean) {
+    return this.http.put<void, void>({
+      url: route(`/items/${id}/favorite`, { favorite: favorite.toString() }),
+    });
+  }
 }
