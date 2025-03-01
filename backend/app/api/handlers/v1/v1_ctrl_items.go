@@ -7,8 +7,10 @@ import (
 	"math/big"
 	"net/http"
 	"net/url"
+	"strconv"
 	"strings"
 
+	"github.com/go-chi/chi/v5"
 	"github.com/google/uuid"
 	"github.com/hay-kot/httpkit/errchain"
 	"github.com/hay-kot/httpkit/server"
@@ -346,6 +348,51 @@ func (ctrl *V1Controller) HandleItemsExport() errchain.HandlerFunc {
 		writer := csv.NewWriter(w)
 		writer.Comma = ','
 		return writer.WriteAll(csvData)
+	}
+}
+
+// HandleItemsByAssetID godoc
+//
+//	@Summary  Get Items by Asset ID
+//	@Tags     Items
+//	@Produce  json
+//	@Param    assetID   path     int  true "Asset ID"
+//	@Param    page      query    int  false "page number"
+//	@Param    pageSize  query    int  false "items per page"
+//	@Success  200       {object} repo.PaginationResult[repo.ItemSummary]{}
+//	@Router   /v1/items/asset/{assetID} [GET]
+//	@Security Bearer
+func (ctrl *V1Controller) HandleItemsByAssetID() errchain.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) error {
+		ctx := services.NewContext(r.Context())
+		
+		// Get the asset ID from the URL
+		assetIDStr := chi.URLParam(r, "assetID")
+		assetIDInt, err := strconv.Atoi(assetIDStr)
+		if err != nil {
+			return validate.NewRequestError(errors.New("invalid asset ID"), http.StatusBadRequest)
+		}
+		
+		assetID := repo.AssetID(assetIDInt)
+		
+		// Get query parameters for pagination
+		params := r.URL.Query()
+		page := queryIntOrNegativeOne(params.Get("page"))
+		pageSize := queryIntOrNegativeOne(params.Get("pageSize"))
+		
+		// Query the items by asset ID
+		items, err := ctrl.repo.Items.QueryByAssetID(ctx, ctx.GID, assetID, page, pageSize)
+		if err != nil {
+			if errors.Is(err, sql.ErrNoRows) {
+				return server.JSON(w, http.StatusOK, repo.PaginationResult[repo.ItemSummary]{
+					Items: []repo.ItemSummary{},
+				})
+			}
+			log.Err(err).Msg("failed to get items by asset ID")
+			return validate.NewRequestError(err, http.StatusInternalServerError)
+		}
+		
+		return server.JSON(w, http.StatusOK, items)
 	}
 }
 
