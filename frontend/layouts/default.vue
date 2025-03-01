@@ -1,90 +1,88 @@
 <template>
-  <div>
-    <!--
-    Confirmation Modal is a singleton used by all components so we render
-    it here to ensure it's always available. Possibly could move this further
-    up the tree
-   -->
-    <ModalConfirm />
-    <ItemCreateModal v-model="modals.item" />
-    <LabelCreateModal v-model="modals.label" />
-    <LocationCreateModal v-model="modals.location" />
-    <AppToast />
-    <div class="drawer drawer-mobile">
-      <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
-      <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0">
-        <AppHeaderDecor class="-mt-10 hidden lg:block" />
-        <!-- Button -->
-        <div class="navbar z-[99] lg:hidden top-0 fixed bg-primary shadow-md drawer-button">
-          <label for="my-drawer-2" class="btn btn-square btn-ghost text-base-100 drawer-button lg:hidden">
-            <MdiMenu class="h-6 w-6" />
-          </label>
-          <NuxtLink to="/home">
-            <h2 class="text-3xl font-bold tracking-tight text-base-100 flex">
-              HomeB
-              <AppLogo class="w-8 -mb-3" />
-              x
-            </h2>
-          </NuxtLink>
-        </div>
-
-        <slot></slot>
+  <!--
+  Confirmation Modal is a singleton used by all components so we render
+  it here to ensure it's always available. Possibly could move this further
+  up the tree
+ -->
+  <ModalConfirm />
+  <ItemCreateModal v-model="modals.item" />
+  <LabelCreateModal v-model="modals.label" />
+  <LocationCreateModal v-model="modals.location" />
+  <AppToast />
+  <div class="drawer drawer-mobile">
+    <input id="my-drawer-2" v-model="drawerToggle" type="checkbox" class="drawer-toggle" />
+    <div class="drawer-content justify-center bg-base-300 pt-20 lg:pt-0">
+      <AppHeaderDecor class="-mt-10 hidden lg:block" />
+      <!-- Button -->
+      <div class="navbar z-[99] lg:hidden top-0 fixed bg-primary shadow-md drawer-button">
+        <label for="my-drawer-2" class="btn btn-square btn-ghost text-base-100 drawer-button lg:hidden">
+          <MdiMenu class="h-6 w-6" />
+        </label>
+        <NuxtLink to="/home">
+          <h2 class="text-3xl font-bold tracking-tight text-base-100 flex">
+            HomeB
+            <AppLogo class="w-8 -mb-3" />
+            x
+          </h2>
+        </NuxtLink>
       </div>
 
-      <!-- Sidebar -->
-      <div class="drawer-side shadow-lg">
-        <label for="my-drawer-2" class="drawer-overlay"></label>
+      <slot></slot>
+    </div>
 
-        <!-- Top Section -->
-        <div class="w-60 py-5 md:py-10 bg-base-200 flex flex-grow-1 flex-col">
-          <div class="space-y-8">
-            <div class="flex flex-col items-center gap-4">
-              <p>Welcome, {{ username }}</p>
-              <NuxtLink class="avatar placeholder" to="/home">
-                <div class="bg-base-300 text-neutral-content rounded-full w-24 p-4">
-                  <AppLogo />
-                </div>
-              </NuxtLink>
-            </div>
-            <div class="flex flex-col bg-base-200">
-              <div class="mx-auto w-40 mb-6">
-                <div class="dropdown overflow visible w-40">
-                  <label tabindex="0" class="btn btn-primary btn-block text-lg text-no-transform">
-                    <span>
-                      <MdiPlus class="mr-1 -ml-1" />
-                    </span>
-                    Create
-                  </label>
-                  <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
-                    <li v-for="btn in dropdown" :key="btn.name">
-                      <button @click="btn.action">
-                        {{ btn.name }}
-                      </button>
-                    </li>
-                  </ul>
-                </div>
+    <!-- Sidebar -->
+    <div class="drawer-side shadow-lg">
+      <label for="my-drawer-2" class="drawer-overlay"></label>
+
+      <!-- Top Section -->
+      <div class="w-60 py-5 md:py-10 bg-base-200 flex flex-grow-1 flex-col">
+        <div class="space-y-8">
+          <div class="flex flex-col items-center gap-4">
+            <p>Welcome, {{ username }}</p>
+            <NuxtLink class="avatar placeholder" to="/home">
+              <div class="bg-base-300 text-neutral-content rounded-full w-24 p-4">
+                <AppLogo />
               </div>
-              <ul class="flex flex-col mx-auto gap-2 w-40 menu">
-                <li v-for="n in nav" :key="n.id" class="text-xl" @click="unfocus">
-                  <NuxtLink
-                    v-if="n.to"
-                    class="rounded-btn"
-                    :to="n.to"
-                    :class="{
-                      'bg-secondary text-secondary-content': n.active?.value,
-                    }"
-                  >
-                    <component :is="n.icon" class="h-6 w-6 mr-4" />
-                    {{ n.name }}
-                  </NuxtLink>
-                </li>
-              </ul>
-            </div>
+            </NuxtLink>
           </div>
-
-          <!-- Bottom -->
-          <button class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn" @click="logout">Sign Out</button>
+          <div class="flex flex-col bg-base-200">
+            <div class="mx-auto w-40 mb-6">
+              <div class="dropdown overflow visible w-40">
+                <label tabindex="0" class="btn btn-primary btn-block text-lg text-no-transform">
+                  <span>
+                    <MdiPlus class="mr-1 -ml-1" />
+                  </span>
+                  Create
+                </label>
+                <ul tabindex="0" class="dropdown-content menu p-2 shadow bg-base-100 rounded-box w-40">
+                  <li v-for="btn in dropdown" :key="btn.name">
+                    <button @click="btn.action">
+                      {{ btn.name }}
+                    </button>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <ul class="flex flex-col mx-auto gap-2 w-40 menu">
+              <li v-for="n in nav" :key="n.id" class="text-xl" @click="unfocus">
+                <NuxtLink
+                  v-if="n.to"
+                  class="rounded-btn"
+                  :to="n.to"
+                  :class="{
+                    'bg-secondary text-secondary-content': n.active?.value,
+                  }"
+                >
+                  <component :is="n.icon" class="h-6 w-6 mr-4" />
+                  {{ n.name }}
+                </NuxtLink>
+              </li>
+            </ul>
+          </div>
         </div>
+
+        <!-- Bottom -->
+        <button class="mt-auto mx-2 hover:bg-base-300 p-3 rounded-btn" @click="logout">Sign Out</button>
       </div>
     </div>
   </div>
@@ -101,6 +99,7 @@
   import MdiMagnify from "~icons/mdi/magnify";
   import MdiAccount from "~icons/mdi/account";
   import MdiCog from "~icons/mdi/cog";
+  import MdiHeart from "~icons/mdi/heart";
 
   const username = computed(() => authCtx.user?.name || "User");
 
@@ -165,6 +164,13 @@
       active: computed(() => route.path === "/items"),
       name: "Search",
       to: "/items",
+    },
+    {
+      icon: MdiHeart,
+      id: 5,
+      active: computed(() => route.path === "/favorites"),
+      name: "Favorites",
+      to: "/favorites",
     },
     {
       icon: MdiAccount,
