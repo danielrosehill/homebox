@@ -1,0 +1,20 @@
+name: Pull Request CI
+
+on:
+  pull_request:
+    branches:
+      - main
+      - main
+
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+
+jobs:
+  backend-tests:
+    name: "Backend Server Tests"
+    uses: ./.github/workflows/partial-backend.yaml
+
+  frontend-tests:
+    name: "Frontend and End-to-End Tests"
+    uses: ./.github/workflows/partial-frontend.yaml
