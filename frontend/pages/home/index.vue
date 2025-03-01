@@ -3,6 +3,7 @@
   import { itemsTable } from "./table";
   import { useLabelStore } from "~~/stores/labels";
   import { useLocationStore } from "~~/stores/locations";
+  import HomeAccordionSection from "~/components/Home/AccordionSection.vue";
 
   definePageMeta({
     middleware: ["auth"],
@@ -34,9 +35,7 @@
         </div>
       </section>
 
-      <section>
-        <Subtitle> {{ $t("home.recently_added") }} </Subtitle>
-
+      <HomeAccordionSection :title="$t('home.recently_added')">
         <p v-if="itemTable.items.length === 0" class="ml-2 text-sm">{{ $t("items.no_results") }}</p>
         <BaseCard v-else-if="breakpoints.lg">
           <ItemViewTable :items="itemTable.items" disable-controls />
@@ -44,23 +43,21 @@
         <div v-else class="grid grid-cols-1 gap-4 md:grid-cols-2">
           <ItemCard v-for="item in itemTable.items" :key="item.id" :item="item" />
         </div>
-      </section>
+      </HomeAccordionSection>
 
-      <section>
-        <Subtitle> {{ $t("home.storage_locations") }} </Subtitle>
+      <HomeAccordionSection :title="$t('home.storage_locations')">
         <p v-if="locations.length === 0" class="ml-2 text-sm">{{ $t("locations.no_results") }}</p>
-        <div v-else class="card grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+        <div v-else class="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
           <LocationCard v-for="location in locations" :key="location.id" :location="location" />
         </div>
-      </section>
+      </HomeAccordionSection>
 
-      <section>
-        <Subtitle> {{ $t("home.labels") }} </Subtitle>
+      <HomeAccordionSection :title="$t('home.labels')">
         <p v-if="labels.length === 0" class="ml-2 text-sm">{{ $t("labels.no_results") }}</p>
         <div v-else class="flex flex-wrap gap-4">
           <LabelChip v-for="label in labels" :key="label.id" size="lg" :label="label" class="shadow-md" />
         </div>
-      </section>
+      </HomeAccordionSection>
     </BaseContainer>
   </div>
 </template>
