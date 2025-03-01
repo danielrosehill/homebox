@@ -1,0 +1,5 @@
+HB.import_ref,HB.location,HB.labels,HB.asset_id,HB.archived,HB.url,HB.name,HB.quantity,HB.description,HB.insured,HB.notes,HB.purchase_price,HB.purchase_from,HB.purchase_time,HB.manufacturer,HB.model_number,HB.serial_number,HB.lifetime_warranty,HB.warranty_expires,HB.warranty_details,HB.sold_to,HB.sold_price,HB.sold_time,HB.sold_notes
+,Basement,,000-001,false,http://localhost:7746/item/4d884a25-94e5-4346-b12b-34ce89932c3e,USB A cables,1,,false,,0,,,,,,false,,,,0,,
+,Basement,,000-002,false,http://localhost:7746/item/b30f2441-82c5-42ec-8186-62e64c577e7b,USB A to C cables ,1,,false,,0,,,,,,false,,,,0,,
+,Bedroom,,000-003,false,http://localhost:7746/item/c88376e9-6409-43fa-ad21-3637b6d9ead7,Holder for Loops,1,,false,,0,,,,,,false,,,,0,,
+,Bathroom,,000-004,false,http://localhost:7746/item/00b3d17b-b513-4440-a214-4cee9b288c61,Optical wipes,1,,false,,0,,,,,,false,,,,0,,
