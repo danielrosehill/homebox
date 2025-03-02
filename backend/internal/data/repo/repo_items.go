@@ -2,15 +2,10 @@ package repo
 
 import (
 	"context"
-	"database/sql"
-	"errors"
 	"fmt"
-	"math/big"
-	"strings"
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/rs/zerolog/log"
 	"github.com/sysadminsmedia/homebox/backend/internal/core/services/reporting/eventbus"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent"
 	"github.com/sysadminsmedia/homebox/backend/internal/data/ent/attachment"
