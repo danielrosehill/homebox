@@ -7,7 +7,7 @@ set -e
 
 # Configuration
 IMAGE_NAME="danielrosehill/homebox"
-TAG="custom"
+TAG="latest"
 DOCKERFILE_PATH="./Dockerfile"
 
 # Ensure we're on the docker/custom-image branch
